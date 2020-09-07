@@ -1,40 +1,40 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const Promotion = require('../models/promotion');
+const Favorite = require('../models/partner');
 const authenticate = require('../authenticate');
 const cors = require('./cors');
 
-const promotionRouter = express.Router();
+const favoriteRouter = express.Router();
 
-promotionRouter.use(bodyParser.json());
+favoriteRouter.use(bodyParser.json());
 
-promotionRouter.route('/')
+favoriteRouter.route('/')
 .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
 .get(cors.cors, (req, res, next) => {
-    Promotion.find()
-    .then(promotions => {
+    Favorite.find()
+    .then(favorite => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(promotions);
+        res.json(favorite);
     })
     .catch(err => next(err));
 })
 .post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-    Promotion.create(req.body)
-    .then(promotion => {
-        console.log('Promotion Created', promotion)
+    Favorite.create(req.body)
+    .then(favorite => {
+        console.log('Favorite Created', favorite)
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(promotion);
+        res.json(favorite);
     })
     .catch(err => next(err));
 })
 .put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     res.statusCode = 403;
-    res.end('PUT operation not supported on /promotions');
+    res.end('PUT operation not supported on /favorite');
 })
 .delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-    Promotion.deleteMany()
+    Favorite.deleteMany()
     .then(response => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
@@ -43,41 +43,41 @@ promotionRouter.route('/')
     .catch(err => next(err));
 });
 
-promotionRouter.route('/:promotionId')
+favoriteRouter.route('/:campsiteId')
 .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
 .get(cors.cors, (req, res, next) => {
-    Promotion.findById(req.params.promotionId)
-    .then(promotion => {
+    Favorite.findById(req.params.campsiteId)
+    .then(favorite => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(promotion);
+        res.json(favorite);
     })
     .catch(err => next(err));
 })
 .post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-    Promotion.findByIdAndUpdate(req.params.promotionId, {
+    Favorite.findByIdAndUpdate(req.params.campsiteId, {
         $set: req.body
     }, {new: true})
-    .then(promotion => {
+    .then(favorite => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(promotion);
+        res.json(favorite);
     })
     .catch(err => next(err));
 })
 .put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-    Promotion.findByIdAndUpdate(req.params.promotionId, {
+    Favorite.findByIdAndUpdate(req.params.campsiteId, {
         $set: req.body
     }, { new: true })
-    .then(promotion => {
+    .then(favorite => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(promotion);
+        res.json(favorite);
     })
     .catch(err => next(err));
 })
 .delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-    Promotion.findByIdAndDelete(req.params.promotionId)
+    Favorite.findByIdAndDelete(req.params.campsiteId)
     .then(response => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
@@ -86,4 +86,4 @@ promotionRouter.route('/:promotionId')
     .catch(err => next(err));
 });
 
-module.exports = promotionRouter;
+module.exports = favoriteRouter;
